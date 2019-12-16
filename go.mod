@@ -1,7 +1,7 @@
 module github.com/foxcpp/go-mtasts
 
 require (
-	github.com/foxcpp/go-mockdns v0.0.0-20191211223108-4a6fcad1301d
+	github.com/foxcpp/go-mockdns v0.0.0-20191216195825-5eabd8dbfe1f
 	golang.org/x/net v0.0.0-20190923162816-aa69164e4478
 	golang.org/x/text v0.3.2
 )

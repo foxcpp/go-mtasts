@@ -1,5 +1,7 @@
 github.com/foxcpp/go-mockdns v0.0.0-20191211223108-4a6fcad1301d h1:XtbADe4vz/W1kw94dqp3xbkm2/W+ian7r7AvlDP4tUg=
 github.com/foxcpp/go-mockdns v0.0.0-20191211223108-4a6fcad1301d/go.mod h1:tPg4cp4nseejPd+UKxtCVQ2hUxNTZ7qQZJa7CLriIeo=
+github.com/foxcpp/go-mockdns v0.0.0-20191216195825-5eabd8dbfe1f h1:b/CFmrdqIGU6eV774xeaQwd1VfgiLuR/8jiY3LyLiMc=
+github.com/foxcpp/go-mockdns v0.0.0-20191216195825-5eabd8dbfe1f/go.mod h1:tPg4cp4nseejPd+UKxtCVQ2hUxNTZ7qQZJa7CLriIeo=
 github.com/miekg/dns v1.1.22 h1:Jm64b3bO9kP43ddLjL2EY3Io6bmy1qGb9Xxz6TqS6rc=
 github.com/miekg/dns v1.1.22/go.mod h1:bPDLeHnStXmXAq1m/Ch/hvfNHr14JKNPMBo3VZKjuso=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
