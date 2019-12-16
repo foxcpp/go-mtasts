@@ -20,7 +20,7 @@ var httpClient = &http.Client{
 func downloadPolicy(ctx context.Context, domain string) (*Policy, error) {
 	// TODO: Consult OCSP/CRL to detect revoked certificates?
 
-	req, err := http.NewRequestWithContext(ctx, "GET", "https://mta-sts."+domain+"/.well-known/mta-sts.txt", nil)
+	req, err := newRequestWithContext(ctx, "GET", "https://mta-sts."+domain+"/.well-known/mta-sts.txt", nil)
 	if err != nil {
 		return nil, err
 	}
