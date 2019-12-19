@@ -115,7 +115,7 @@ func (e *Entry) STS(l *List) mtasts.Policy {
 		Mode: e.Mode,
 
 		// Set MaxAge so that policy will expire when the list expires.
-		MaxAge: int(now().Sub(time.Time(l.Expires)).Seconds()),
+		MaxAge: int(time.Time(l.Expires).Sub(now()).Seconds()),
 
 		MX: make([]string, 0, len(e.MXs)),
 	}

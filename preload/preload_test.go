@@ -38,7 +38,8 @@ const sampleList = `{
       "mxs": ["mail.example.com", ".example.net"]
     }
   }
-}`
+}
+`
 
 var sampleListParsed = &List{
 	Timestamp: ListTime(time.Date(2014, time.June, 6, 14, 30, 16, 0, time.UTC)),
