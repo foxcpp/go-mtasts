@@ -131,11 +131,6 @@ func (c *Cache) fetch(ctx context.Context, ignoreDns bool, now time.Time, domain
 	validCache := true
 	cachedId, fetchTime, cachedPolicy, err := c.Store.Load(domain)
 	if err != nil {
-		if err != ErrNoPolicy {
-			// Something wrong with the FS directory used for caching, this is bad.
-			return false, nil, err
-		}
-
 		validCache = false
 	} else if fetchTime.Add(time.Duration(cachedPolicy.MaxAge) * time.Second).Before(now) {
 		validCache = false
