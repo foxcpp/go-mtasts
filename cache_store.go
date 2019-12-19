@@ -30,17 +30,24 @@ func (s fsStore) List() ([]string, error) {
 }
 
 func (s fsStore) Store(domain, id string, fetchTime time.Time, p *Policy) error {
-	f, err := os.Create(filepath.Join(s.Dir, domain))
+	path := filepath.Join(s.Dir, domain)
+
+	f, err := os.Create(path + ".tmp")
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
-	return json.NewEncoder(f).Encode(map[string]interface{}{
+	err = json.NewEncoder(f).Encode(map[string]interface{}{
 		"ID":        id,
 		"FetchTime": fetchTime,
 		"Policy":    p,
 	})
+	if err != nil {
+		return err
+	}
+
+	return os.Rename(f.Name(), path)
 }
 
 func (s fsStore) Load(domain string) (id string, fetchTime time.Time, p *Policy, err error) {
