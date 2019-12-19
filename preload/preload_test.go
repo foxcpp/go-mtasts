@@ -148,7 +148,7 @@ func TestEntry_STS(t *testing.T) {
 		sts := ent.STS(l)
 		stsExpected := mtasts.Policy{
 			Mode:   mtasts.ModeTesting,
-			MaxAge: int(now().Sub(time.Time(l.Expires)).Seconds()),
+			MaxAge: int(time.Time(l.Expires).Sub(now()).Seconds()),
 			MX:     []string{"mail.example.com", "*.example.net"},
 		}
 		if !reflect.DeepEqual(sts, stsExpected) {

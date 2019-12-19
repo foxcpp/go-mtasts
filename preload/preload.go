@@ -109,6 +109,11 @@ func (l *List) Lookup(domain string) (e Entry, ok bool) {
 	return e, true
 }
 
+// Expired reports whether the list is expired and should be updated.
+func (l *List) Expired() bool {
+	return time.Time(l.Expires).After(now())
+}
+
 // STS converts the Entry into the equivalent MTA-STS policy.
 func (e *Entry) STS(l *List) mtasts.Policy {
 	policy := mtasts.Policy{
