@@ -80,6 +80,10 @@ func TestRead(t *testing.T) {
 	if !reflect.DeepEqual(l, sampleListParsed) {
 		t.Fatalf("Wrong structure output:\nWant %+v\nGot : %+v", sampleListParsed, l)
 	}
+
+	if l.Expired() {
+		t.Fatal("The list is reported as expired")
+	}
 }
 
 func TestList_Lookup(t *testing.T) {
@@ -180,6 +184,6 @@ func TestRead_UnixTimestamp(t *testing.T) {
 
 func init() {
 	now = func() time.Time {
-		return time.Date(2014, time.June, 6, 14, 30, 16, 0, time.UTC)
+		return time.Date(2014, time.June, 6, 14, 30, 18, 0, time.UTC)
 	}
 }
