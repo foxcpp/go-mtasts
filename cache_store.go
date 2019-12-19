@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 )
 
@@ -74,22 +75,31 @@ func NewFSCache(directory string) *Cache {
 	}
 }
 
-type ramStore map[string]struct {
-	id        string
-	fetchtime time.Time
-	policy    *Policy
+type ramStore struct {
+	lock sync.RWMutex
+	m    map[string]struct {
+		id        string
+		fetchtime time.Time
+		policy    *Policy
+	}
 }
 
-func (s ramStore) List() ([]string, error) {
-	keys := make([]string, 0, len(s))
-	for k := range s {
+func (s *ramStore) List() ([]string, error) {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+
+	keys := make([]string, 0, len(s.m))
+	for k := range s.m {
 		keys = append(keys, k)
 	}
 	return keys, nil
 }
 
-func (s ramStore) Store(key string, id string, fetchTime time.Time, policy *Policy) error {
-	s[key] = struct {
+func (s *ramStore) Store(key string, id string, fetchTime time.Time, policy *Policy) error {
+	s.lock.Lock()
+	defer s.lock.Unlock()
+
+	s.m[key] = struct {
 		id        string
 		fetchtime time.Time
 		policy    *Policy
@@ -99,18 +109,31 @@ func (s ramStore) Store(key string, id string, fetchTime time.Time, policy *Poli
 	return nil
 }
 
-func (s ramStore) Load(key string) (id string, fetchTime time.Time, policy *Policy, err error) {
-	data, ok := s[key]
+func (s *ramStore) Load(key string) (id string, fetchTime time.Time, policy *Policy, err error) {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+
+	data, ok := s.m[key]
 	if !ok {
 		return "", time.Time{}, nil, ErrNoPolicy
 	}
 	return data.id, data.fetchtime, data.policy, nil
 }
 
+func newRAMStore() *ramStore {
+	return &ramStore{m: make(map[string]struct {
+		id        string
+		fetchtime time.Time
+		policy    *Policy
+	})}
+}
+
 // NewRAMCache creates the Cache object using RAM map to store cached policies.
+//
+// The underlying Store implementation is goroutine-safe.
 func NewRAMCache() *Cache {
 	return &Cache{
-		Store:    ramStore{},
+		Store:    newRAMStore(),
 		Resolver: net.DefaultResolver,
 	}
 }

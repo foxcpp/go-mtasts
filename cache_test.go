@@ -23,7 +23,7 @@ func TestCacheGet(t *testing.T) {
 		MX:     []string{"a"},
 	}
 	c := Cache{
-		Store: make(ramStore),
+		Store: newRAMStore(),
 		Resolver: &mockdns.Resolver{
 			Zones: map[string]mockdns.Zone{
 				"_mta-sts.example.org.": {
@@ -45,7 +45,7 @@ func TestCacheGet(t *testing.T) {
 
 func TestCacheGet_Error_DNS(t *testing.T) {
 	c := Cache{
-		Store: make(ramStore),
+		Store: newRAMStore(),
 		Resolver: &mockdns.Resolver{
 			Zones: nil,
 		},
@@ -60,7 +60,7 @@ func TestCacheGet_Error_DNS(t *testing.T) {
 
 func TestCacheGet_Error_HTTPS(t *testing.T) {
 	c := Cache{
-		Store: make(ramStore),
+		Store: newRAMStore(),
 		Resolver: &mockdns.Resolver{
 			Zones: map[string]mockdns.Zone{
 				"_mta-sts.example.org.": {
@@ -84,7 +84,7 @@ func TestCacheGet_Cached(t *testing.T) {
 		MX:     []string{"a"},
 	}
 	c := Cache{
-		Store: make(ramStore),
+		Store: newRAMStore(),
 		Resolver: &mockdns.Resolver{
 			Zones: map[string]mockdns.Zone{
 				"_mta-sts.example.org.": {
@@ -124,7 +124,7 @@ func TestCacheGet_Expired(t *testing.T) {
 		MX:     []string{"a"},
 	}
 	c := Cache{
-		Store: make(ramStore),
+		Store: newRAMStore(),
 		Resolver: &mockdns.Resolver{
 			Zones: map[string]mockdns.Zone{
 				"_mta-sts.example.org.": {
@@ -172,7 +172,7 @@ func TestCacheGet_IDChange(t *testing.T) {
 		},
 	}
 	c := Cache{
-		Store:          make(ramStore),
+		Store:          newRAMStore(),
 		Resolver:       resolver,
 		DownloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
 	}
@@ -216,7 +216,7 @@ func TestCacheGet_DNSDisappear(t *testing.T) {
 		},
 	}
 	c := Cache{
-		Store:          make(ramStore),
+		Store:          newRAMStore(),
 		Resolver:       resolver,
 		DownloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
 	}
@@ -254,7 +254,7 @@ func TestCacheGet_HTTPGet_ErrNoPolicy(t *testing.T) {
 		},
 	}
 	c := Cache{
-		Store:          make(ramStore),
+		Store:          newRAMStore(),
 		Resolver:       resolver,
 		DownloadPolicy: mockDownloadPolicy(nil, errors.New("broken")),
 	}
@@ -284,7 +284,7 @@ func TestCacheGet_IDChange_Error(t *testing.T) {
 		},
 	}
 	c := Cache{
-		Store:          make(ramStore),
+		Store:          newRAMStore(),
 		Resolver:       resolver,
 		DownloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
 	}
@@ -331,7 +331,7 @@ func TestCacheGet_IDChange_Expired_Error(t *testing.T) {
 		},
 	}
 	c := Cache{
-		Store:          make(ramStore),
+		Store:          newRAMStore(),
 		Resolver:       resolver,
 		DownloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
 	}
@@ -377,7 +377,7 @@ func TestCacheRefresh(t *testing.T) {
 		},
 	}
 	c := Cache{
-		Store:          make(ramStore),
+		Store:          newRAMStore(),
 		Resolver:       resolver,
 		DownloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
 	}
@@ -429,7 +429,7 @@ func TestCacheRefresh_Error(t *testing.T) {
 		},
 	}
 	c := Cache{
-		Store:          make(ramStore),
+		Store:          newRAMStore(),
 		Resolver:       resolver,
 		DownloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
 	}
