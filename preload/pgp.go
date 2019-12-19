@@ -1,7 +1,6 @@
 package preload
 
 import (
-	"fmt"
 	"io"
 	"strings"
 
@@ -11,12 +10,12 @@ import (
 func verifyPGP(key string, sig, blob io.Reader) error {
 	entList, err := openpgp.ReadArmoredKeyRing(strings.NewReader(key))
 	if err != nil {
-		return PGPError{Err: fmt.Errorf("key read: %w", err)}
+		return PGPError{Err: err}
 	}
 
 	_, err = openpgp.CheckArmoredDetachedSignature(entList, blob, sig)
 	if err != nil {
-		return PGPError{Err: fmt.Errorf("sig check: %w", err)}
+		return PGPError{Err: err}
 	}
 	return nil
 }
