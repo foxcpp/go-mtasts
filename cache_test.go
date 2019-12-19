@@ -31,7 +31,7 @@ func TestCacheGet(t *testing.T) {
 				},
 			},
 		},
-		downloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
+		DownloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
 	}
 
 	policy, err := c.Get(context.Background(), "example.org")
@@ -49,7 +49,7 @@ func TestCacheGet_Error_DNS(t *testing.T) {
 		Resolver: &mockdns.Resolver{
 			Zones: nil,
 		},
-		downloadPolicy: mockDownloadPolicy(nil, errors.New("broken")),
+		DownloadPolicy: mockDownloadPolicy(nil, errors.New("broken")),
 	}
 
 	_, err := c.Get(context.Background(), "example.org")
@@ -68,7 +68,7 @@ func TestCacheGet_Error_HTTPS(t *testing.T) {
 				},
 			},
 		},
-		downloadPolicy: mockDownloadPolicy(nil, errors.New("broken")),
+		DownloadPolicy: mockDownloadPolicy(nil, errors.New("broken")),
 	}
 
 	_, err := c.Get(context.Background(), "example.org")
@@ -92,7 +92,7 @@ func TestCacheGet_Cached(t *testing.T) {
 				},
 			},
 		},
-		downloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
+		DownloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
 	}
 
 	policy, err := c.Get(context.Background(), "example.org")
@@ -103,8 +103,8 @@ func TestCacheGet_Cached(t *testing.T) {
 		t.Fatalf("wrong policy returned, want %+v, got %+v", expectedPolicy, policy)
 	}
 	// It should be cached up to 60 seconds, so second Get should work without
-	// calling downloadPolicy.
-	c.downloadPolicy = mockDownloadPolicy(nil, errors.New("broken"))
+	// calling DownloadPolicy.
+	c.DownloadPolicy = mockDownloadPolicy(nil, errors.New("broken"))
 
 	policy, err = c.Get(context.Background(), "example.org")
 	if err != nil {
@@ -132,7 +132,7 @@ func TestCacheGet_Expired(t *testing.T) {
 				},
 			},
 		},
-		downloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
+		DownloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
 	}
 
 	policy, err := c.Get(context.Background(), "example.org")
@@ -147,7 +147,7 @@ func TestCacheGet_Expired(t *testing.T) {
 
 	// Policy should expire now. Next Get should refetch it.
 	expectedPolicy.MX = []string{"b"}
-	c.downloadPolicy = mockDownloadPolicy(expectedPolicy, nil)
+	c.DownloadPolicy = mockDownloadPolicy(expectedPolicy, nil)
 
 	policy, err = c.Get(context.Background(), "example.org")
 	if err != nil {
@@ -174,7 +174,7 @@ func TestCacheGet_IDChange(t *testing.T) {
 	c := Cache{
 		Store:          make(ramStore),
 		Resolver:       resolver,
-		downloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
+		DownloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
 	}
 
 	policy, err := c.Get(context.Background(), "example.org")
@@ -191,7 +191,7 @@ func TestCacheGet_IDChange(t *testing.T) {
 		TXT: []string{"v=STSv1; id=2345"},
 	}
 	expectedPolicy.MX = []string{"b"}
-	c.downloadPolicy = mockDownloadPolicy(expectedPolicy, nil)
+	c.DownloadPolicy = mockDownloadPolicy(expectedPolicy, nil)
 
 	policy, err = c.Get(context.Background(), "example.org")
 	if err != nil {
@@ -218,7 +218,7 @@ func TestCacheGet_DNSDisappear(t *testing.T) {
 	c := Cache{
 		Store:          make(ramStore),
 		Resolver:       resolver,
-		downloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
+		DownloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
 	}
 
 	policy, err := c.Get(context.Background(), "example.org")
@@ -234,7 +234,7 @@ func TestCacheGet_DNSDisappear(t *testing.T) {
 	// >via HTTPS, but a valid (non-expired) policy exists in the sender's
 	// >cache, the sender MUST apply that cached policy.
 	resolver.Zones = nil
-	c.downloadPolicy = mockDownloadPolicy(nil, errors.New("broken"))
+	c.DownloadPolicy = mockDownloadPolicy(nil, errors.New("broken"))
 
 	policy, err = c.Get(context.Background(), "example.org")
 	if err != nil {
@@ -256,7 +256,7 @@ func TestCacheGet_HTTPGet_ErrNoPolicy(t *testing.T) {
 	c := Cache{
 		Store:          make(ramStore),
 		Resolver:       resolver,
-		downloadPolicy: mockDownloadPolicy(nil, errors.New("broken")),
+		DownloadPolicy: mockDownloadPolicy(nil, errors.New("broken")),
 	}
 
 	// RFC 8461, Page 10:
@@ -286,7 +286,7 @@ func TestCacheGet_IDChange_Error(t *testing.T) {
 	c := Cache{
 		Store:          make(ramStore),
 		Resolver:       resolver,
-		downloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
+		DownloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
 	}
 
 	policy, err := c.Get(context.Background(), "example.org")
@@ -304,7 +304,7 @@ func TestCacheGet_IDChange_Error(t *testing.T) {
 	resolver.Zones["_mta-sts.example.org."] = mockdns.Zone{
 		TXT: []string{"v=STSv1; id=2345"},
 	}
-	c.downloadPolicy = mockDownloadPolicy(nil, errors.New("broken"))
+	c.DownloadPolicy = mockDownloadPolicy(nil, errors.New("broken"))
 
 	policy, err = c.Get(context.Background(), "example.org")
 	if err != nil {
@@ -333,7 +333,7 @@ func TestCacheGet_IDChange_Expired_Error(t *testing.T) {
 	c := Cache{
 		Store:          make(ramStore),
 		Resolver:       resolver,
-		downloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
+		DownloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
 	}
 
 	policy, err := c.Get(context.Background(), "example.org")
@@ -353,7 +353,7 @@ func TestCacheGet_IDChange_Expired_Error(t *testing.T) {
 	resolver.Zones["_mta-sts.example.org."] = mockdns.Zone{
 		TXT: []string{"v=STSv1; id=2345"},
 	}
-	c.downloadPolicy = mockDownloadPolicy(nil, errors.New("broken"))
+	c.DownloadPolicy = mockDownloadPolicy(nil, errors.New("broken"))
 
 	policy, err = c.Get(context.Background(), "example.org")
 	if err == nil {
@@ -379,7 +379,7 @@ func TestCacheRefresh(t *testing.T) {
 	c := Cache{
 		Store:          make(ramStore),
 		Resolver:       resolver,
-		downloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
+		DownloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
 	}
 
 	policy, err := c.Get(context.Background(), "example.org")
@@ -393,7 +393,7 @@ func TestCacheRefresh(t *testing.T) {
 	time.Sleep(2 * time.Second)
 
 	expectedPolicy.MX = []string{"b"}
-	c.downloadPolicy = mockDownloadPolicy(expectedPolicy, nil)
+	c.DownloadPolicy = mockDownloadPolicy(expectedPolicy, nil)
 
 	// It should fetch the new record.
 	if err := c.Refresh(); err != nil {
@@ -401,7 +401,7 @@ func TestCacheRefresh(t *testing.T) {
 	}
 
 	// Then don't allow Get to refetch the record.
-	c.downloadPolicy = mockDownloadPolicy(nil, errors.New("broken"))
+	c.DownloadPolicy = mockDownloadPolicy(nil, errors.New("broken"))
 
 	// It should return the new record from cache.
 	policy, err = c.Get(context.Background(), "example.org")
@@ -431,7 +431,7 @@ func TestCacheRefresh_Error(t *testing.T) {
 	c := Cache{
 		Store:          make(ramStore),
 		Resolver:       resolver,
-		downloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
+		DownloadPolicy: mockDownloadPolicy(expectedPolicy, nil),
 	}
 
 	policy, err := c.Get(context.Background(), "example.org")
@@ -445,7 +445,7 @@ func TestCacheRefresh_Error(t *testing.T) {
 	time.Sleep(2 * time.Second)
 
 	// Don't let Refresh refetch the record.
-	c.downloadPolicy = mockDownloadPolicy(nil, errors.New("broken"))
+	c.DownloadPolicy = mockDownloadPolicy(nil, errors.New("broken"))
 
 	if err := c.Refresh(); err != nil {
 		t.Fatalf("cache refresh: %v", err)

@@ -78,9 +78,8 @@ type Cache struct {
 	Store    Store
 	Resolver Resolver
 
-	// Hook for testing, if non-nil replaces the downloadPolicy implementation
-	// above.
-	downloadPolicy func(string) (*Policy, error)
+	// If non-nil replaces the function used to download policy texts.
+	DownloadPolicy func(domain string) (*Policy, error)
 }
 
 func IsNoPolicy(err error) bool {
@@ -183,8 +182,8 @@ func (c *Cache) fetch(ctx context.Context, ignoreDns bool, now time.Time, domain
 			policy *Policy
 			err    error
 		)
-		if c.downloadPolicy != nil {
-			policy, err = c.downloadPolicy(domain)
+		if c.DownloadPolicy != nil {
+			policy, err = c.DownloadPolicy(domain)
 		} else {
 			policy, err = downloadPolicy(ctx, domain)
 		}
