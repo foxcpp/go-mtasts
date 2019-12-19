@@ -95,3 +95,37 @@ func TestPreloadedCache_ListExpired(t *testing.T) {
 		t.Fatal("Expected an error, got none")
 	}
 }
+
+func TestPreloadedCache_UpdateWithExpired(t *testing.T) {
+	list, err := Read(strings.NewReader(sampleList))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	c := mtasts.NewRAMCache()
+	store := WrapCache(c.Store, list)
+
+	listCpy := *list
+	listCpy.Expires = ListTime(now().Add(-10 * time.Second))
+
+	if err := store.Update(&listCpy); err == nil {
+		t.Fatal("Expected an error, got none")
+	}
+}
+
+func TestPreloadedCache_UpdateWithOlder(t *testing.T) {
+	list, err := Read(strings.NewReader(sampleList))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	c := mtasts.NewRAMCache()
+	store := WrapCache(c.Store, list)
+
+	listCpy := *list
+	listCpy.Timestamp = ListTime(time.Time(list.Timestamp).Add(-10 * time.Second))
+
+	if err := store.Update(&listCpy); err == nil {
+		t.Fatal("Expected an error, got none")
+	}
+}
