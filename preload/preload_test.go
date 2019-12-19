@@ -70,8 +70,8 @@ var sampleListParsed = &List{
 	},
 }
 
-func TestLoadList(t *testing.T) {
-	l, err := LoadList(strings.NewReader(sampleList))
+func TestRead(t *testing.T) {
+	l, err := Read(strings.NewReader(sampleList))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -81,14 +81,14 @@ func TestLoadList(t *testing.T) {
 	}
 }
 
-func TestList_LookupEntry(t *testing.T) {
-	l, err := LoadList(strings.NewReader(sampleList))
+func TestList_Lookup(t *testing.T) {
+	l, err := Read(strings.NewReader(sampleList))
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Run("trivial", func(t *testing.T) {
-		ent, ok := l.LookupEntry("example.com")
+		ent, ok := l.Lookup("example.com")
 		if !ok {
 			t.Fatal("Entry not found but should")
 		}
@@ -103,7 +103,7 @@ func TestList_LookupEntry(t *testing.T) {
 		}
 	})
 	t.Run("aliased", func(t *testing.T) {
-		ent, ok := l.LookupEntry("gmail.com")
+		ent, ok := l.Lookup("gmail.com")
 		if !ok {
 			t.Fatal("Entry not found but should")
 		}
@@ -118,14 +118,14 @@ func TestList_LookupEntry(t *testing.T) {
 		}
 	})
 	t.Run("non-existent", func(t *testing.T) {
-		_, ok := l.LookupEntry("non-existent.com")
+		_, ok := l.Lookup("non-existent.com")
 		if ok {
 			t.Fatal("Entry found but should not")
 		}
 	})
 	t.Run("non-existent alias", func(t *testing.T) {
 		l.Policies["gmail.com"] = Entry{PolicyAlias: "wtf"}
-		_, ok := l.LookupEntry("gmail.com")
+		_, ok := l.Lookup("gmail.com")
 		if ok {
 			t.Fatal("Entry found but should not")
 		}
@@ -133,13 +133,13 @@ func TestList_LookupEntry(t *testing.T) {
 }
 
 func TestEntry_STS(t *testing.T) {
-	l, err := LoadList(strings.NewReader(sampleList))
+	l, err := Read(strings.NewReader(sampleList))
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Run("trivial", func(t *testing.T) {
-		ent, ok := l.LookupEntry("example.com")
+		ent, ok := l.Lookup("example.com")
 		if !ok {
 			t.Fatal("Entry not found but should")
 		}
@@ -156,7 +156,7 @@ func TestEntry_STS(t *testing.T) {
 	})
 }
 
-func TestLoadList_UnixTimestamp(t *testing.T) {
+func TestRead_UnixTimestamp(t *testing.T) {
 	const listStr = `{
   "timestamp": 1576604526,
   "author": "Electronic Frontier Foundation https://eff.org",
@@ -166,7 +166,7 @@ func TestLoadList_UnixTimestamp(t *testing.T) {
   "policies": {}
 }`
 
-	l, err := LoadList(strings.NewReader(listStr))
+	l, err := Read(strings.NewReader(listStr))
 	if err != nil {
 		t.Fatal(err)
 	}

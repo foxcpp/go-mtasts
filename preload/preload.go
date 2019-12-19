@@ -49,7 +49,7 @@ func (t ListTime) String() string {
 }
 
 type Entry struct {
-	// Set to the normalized domain name by LookupEntry.
+	// Set to the normalized domain name by Lookup.
 	Domain string `json:"-"`
 
 	PolicyAlias string      `json:"policy-alias"`
@@ -66,20 +66,20 @@ type List struct {
 	Policies      map[string]Entry `json:"policies"`
 }
 
-func LoadList(r io.Reader) (*List, error) {
+func Read(r io.Reader) (*List, error) {
 	l := List{}
 	err := json.NewDecoder(r).Decode(&l)
 	return &l, err
 }
 
-// LookupEntry extracts the corresponding entry from the list.
+// Lookup extracts the corresponding entry from the list.
 //
 // Ths specified domain is case-folded and converted to A-labels form before
 // lookup.
 //
-// PolicyAlias field is always empty, LookupEntry resolves aliases. If there is
+// PolicyAlias field is always empty, Lookup resolves aliases. If there is
 // no such alias - ok = false is returned without an entry.
-func (l *List) LookupEntry(domain string) (e Entry, ok bool) {
+func (l *List) Lookup(domain string) (e Entry, ok bool) {
 	// STARTTLS List spec does not specify the behavior in regards of IDNA
 	// domains. As a sanity check, we refuse to lookup non-IDNA conforming
 	// domains and convert them to A-labels form as it is consistent with
